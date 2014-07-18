@@ -43,7 +43,7 @@ public class View extends TiUIView {
 		Log.d(TAG, "createAdView()");
 		// create the adView
 		adView = new AdView(proxy.getActivity());
-		adView.setAdSize(AdSize.BANNER);
+		adView.setAdSize(AdSize.SMART_BANNER);
 		adView.setAdUnitId(AdmobModule.PUBLISHER_ID);
 		// set the listener
 		adView.setAdListener(new AdListener() {
