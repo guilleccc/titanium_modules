@@ -6,6 +6,8 @@
  */
 package ti.admob;
 
+import java.util.LinkedHashMap;
+
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.proxy.TiViewProxy;
@@ -31,6 +33,7 @@ public class View extends TiUIView {
 	String prop_color_text;
 	String prop_color_link;
 	String prop_color_url;
+	LinkedHashMap<String, AdSize> SIZE = new LinkedHashMap<String, AdSize>();
 
 	public View(final TiViewProxy proxy) {
 		super(proxy);
@@ -43,7 +46,7 @@ public class View extends TiUIView {
 		Log.d(TAG, "createAdView()");
 		// create the adView
 		adView = new AdView(proxy.getActivity());
-		adView.setAdSize(AdSize.SMART_BANNER);
+		adView.setAdSize(AdmobModule.AD_SIZE);
 		adView.setAdUnitId(AdmobModule.PUBLISHER_ID);
 		// set the listener
 		adView.setAdListener(new AdListener() {
@@ -51,7 +54,7 @@ public class View extends TiUIView {
 				Log.d(TAG, "onAdLoaded()");
 				proxy.fireEvent(AdmobModule.AD_RECEIVED, new KrollDict());
 			}
-			
+
 			public void onAdFailedToLoad(int errorCode) {
 				Log.d(TAG, "onAdFailedToLoad(): " + errorCode);
 				proxy.fireEvent(AdmobModule.AD_NOT_RECEIVED, new KrollDict());
@@ -64,6 +67,15 @@ public class View extends TiUIView {
 		loadAd(AdmobModule.TESTING);
 	}
 
+	private void setSizes() {
+		SIZE.put("BANNER", AdSize.BANNER);
+		SIZE.put("MEDIUM_RECTANGLE", AdSize.MEDIUM_RECTANGLE);
+		SIZE.put("FULL_BANNER", AdSize.FULL_BANNER);
+		SIZE.put("LEADERBOARD", AdSize.LEADERBOARD);
+		SIZE.put("SMART_BANNER", AdSize.SMART_BANNER);
+		SIZE.put("WIDE_SKYSCRAPER", AdSize.WIDE_SKYSCRAPER);
+	}
+
 	// load the adMob ad
 	public void loadAd(final Boolean testing) {
 		proxy.getActivity().runOnUiThread(new Runnable() {
@@ -71,7 +83,8 @@ public class View extends TiUIView {
 				final AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 				Log.d(TAG, "requestAd(Boolean testing) -- testing:" + testing);
 				if (testing) {
-					adRequestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+					adRequestBuilder
+							.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
 				}
 				Bundle bundle = createAdRequestProperties();
 				if (bundle.size() > 0) {
@@ -81,13 +94,14 @@ public class View extends TiUIView {
 				adView.loadAd(adRequestBuilder.build());
 			}
 		});
-		
+
 	}
 
 	@Override
 	public void processProperties(KrollDict d) {
 		super.processProperties(d);
 		Log.d(TAG, "process properties");
+		this.setSizes();
 		if (d.containsKey("publisherId")) {
 			Log.d(TAG, "has publisherId: " + d.getString("publisherId"));
 			AdmobModule.PUBLISHER_ID = d.getString("publisherId");
@@ -95,6 +109,12 @@ public class View extends TiUIView {
 		if (d.containsKey("testing")) {
 			Log.d(TAG, "has testing param: " + d.getBoolean("testing"));
 			AdmobModule.TESTING = d.getBoolean("testing");
+		}
+		if (d.containsKey("adSize")) {
+			Log.d(TAG, "has AD_SIZE: " + d.getString("adSize"));
+			AdmobModule.AD_SIZE = SIZE.get(d.getString("adSize"));
+		} else {
+			AdmobModule.AD_SIZE = AdSize.SMART_BANNER;
 		}
 		if (d.containsKey(AdmobModule.PROPERTY_COLOR_BG)) {
 			Log.d(TAG, "has PROPERTY_COLOR_BG: " + d.getString(AdmobModule.PROPERTY_COLOR_BG));
@@ -157,7 +177,8 @@ public class View extends TiUIView {
 		loadAd(AdmobModule.TESTING);
 	}
 
-	// pass true to requestAd(Boolean testing) -- this overrides how the module was set
+	// pass true to requestAd(Boolean testing) -- this overrides how the module
+	// was set
 	public void requestTestAd() {
 		Log.d(TAG, "requestTestAd()");
 		loadAd(true);
@@ -186,7 +207,8 @@ public class View extends TiUIView {
 		return bundle;
 	}
 
-	// modifies the color prop -- removes # and changes constants into hex values
+	// modifies the color prop -- removes # and changes constants into hex
+	// values
 	private String convertColorProp(String color) {
 		color = color.replace("#", "");
 		if (color.equals("white"))

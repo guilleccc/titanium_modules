@@ -11,6 +11,8 @@ import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 
+import com.google.android.gms.ads.AdSize;
+
 @Kroll.module(name = "Admob", id = "ti.admob")
 public class AdmobModule extends KrollModule {
 	// Standard Debugging variables
@@ -24,6 +26,7 @@ public class AdmobModule extends KrollModule {
 	public static String PUBLISHER_ID;
 
 	// *
+	public static AdSize AD_SIZE;
 	public static String PROPERTY_COLOR_BG = "adBackgroundColor";
 	public static String PROPERTY_COLOR_BG_TOP = "backgroundTopColor";
 	public static String PROPERTY_COLOR_BORDER = "borderColor";
