@@ -11,8 +11,6 @@ import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 
-import com.google.android.gms.ads.AdSize;
-
 @Kroll.module(name = "Admob", id = "ti.admob")
 public class AdmobModule extends KrollModule {
 	// Standard Debugging variables
@@ -23,10 +21,8 @@ public class AdmobModule extends KrollModule {
 	@Kroll.constant
 	public static final String AD_NOT_RECEIVED = "ad_not_received";
 	public static Boolean TESTING = false;
-	public static String PUBLISHER_ID;
 
 	// *
-	public static AdSize AD_SIZE;
 	public static String PROPERTY_COLOR_BG = "adBackgroundColor";
 	public static String PROPERTY_COLOR_BG_TOP = "backgroundTopColor";
 	public static String PROPERTY_COLOR_BORDER = "borderColor";
@@ -42,14 +38,6 @@ public class AdmobModule extends KrollModule {
 	public AdmobModule() {
 		super();
 		Log.d(TAG, "adMob module instantiated");
-	}
-
-	// use this to set the publisher id
-	// must be done before the call to instantiate the view
-	@Kroll.method
-	public void setPublisherId(String pubId) {
-		Log.d(TAG, "setPublisherId(): " + pubId);
-		PUBLISHER_ID = pubId;
 	}
 
 	@Kroll.method

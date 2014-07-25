@@ -34,20 +34,20 @@ public class View extends TiUIView {
 	String prop_color_link;
 	String prop_color_url;
 	LinkedHashMap<String, AdSize> SIZE = new LinkedHashMap<String, AdSize>();
+	AdSize ad_size;
+	String ad_unit_id;
 
 	public View(final TiViewProxy proxy) {
 		super(proxy);
 		Log.d(TAG, "Creating an adMob ad view");
-		// get the publisher id that was set in the module
-		Log.d(TAG, "AdmobModule.PUBLISHER_ID: " + AdmobModule.PUBLISHER_ID);
 	}
 
 	private void createAdView() {
 		Log.d(TAG, "createAdView()");
 		// create the adView
 		adView = new AdView(proxy.getActivity());
-		adView.setAdSize(AdmobModule.AD_SIZE);
-		adView.setAdUnitId(AdmobModule.PUBLISHER_ID);
+		adView.setAdSize(ad_size);
+		adView.setAdUnitId(ad_unit_id);
 		// set the listener
 		adView.setAdListener(new AdListener() {
 			public void onAdLoaded() {
@@ -83,8 +83,7 @@ public class View extends TiUIView {
 				final AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 				Log.d(TAG, "requestAd(Boolean testing) -- testing:" + testing);
 				if (testing) {
-					adRequestBuilder
-							.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+					adRequestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
 				}
 				Bundle bundle = createAdRequestProperties();
 				if (bundle.size() > 0) {
@@ -102,9 +101,10 @@ public class View extends TiUIView {
 		super.processProperties(d);
 		Log.d(TAG, "process properties");
 		this.setSizes();
+		// publisherId must be called adUnitId. Because it refers to a specific ad.
 		if (d.containsKey("publisherId")) {
 			Log.d(TAG, "has publisherId: " + d.getString("publisherId"));
-			AdmobModule.PUBLISHER_ID = d.getString("publisherId");
+			ad_unit_id = d.getString("publisherId");
 		}
 		if (d.containsKey("testing")) {
 			Log.d(TAG, "has testing param: " + d.getBoolean("testing"));
@@ -112,9 +112,9 @@ public class View extends TiUIView {
 		}
 		if (d.containsKey("adSize")) {
 			Log.d(TAG, "has AD_SIZE: " + d.getString("adSize"));
-			AdmobModule.AD_SIZE = SIZE.get(d.getString("adSize"));
+			ad_size = SIZE.get(d.getString("adSize"));
 		} else {
-			AdmobModule.AD_SIZE = AdSize.SMART_BANNER;
+			ad_size= AdSize.SMART_BANNER;
 		}
 		if (d.containsKey(AdmobModule.PROPERTY_COLOR_BG)) {
 			Log.d(TAG, "has PROPERTY_COLOR_BG: " + d.getString(AdmobModule.PROPERTY_COLOR_BG));
