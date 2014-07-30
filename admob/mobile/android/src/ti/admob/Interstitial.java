@@ -30,15 +30,7 @@ public class Interstitial extends TiUIView {
 		Log.d(TAG, "load interstitial ad");
 		// Begin loading your interstitial.
 		interstitial.loadAd(adRequest);
-		// display interstitial asynchronical
-		// To avoid the "showInterstitial must be called on the main UI thread" error
-		interstitial.setAdListener(new AdListener() {
-		    public void onAdLoaded() {
-		        displayInterstitial();
-		    }
-		});   
 	    }
-
 	});
     }
 
@@ -64,6 +56,14 @@ public class Interstitial extends TiUIView {
 	    Log.d(TAG, "interstitial is loaded");
 	    interstitial.show();
 	}
+    }
+
+    public void displayInterstitialUIThread() {
+	proxy.getActivity().runOnUiThread(new Runnable() {
+	    public void run() {
+		displayInterstitial();
+	    }
+	});
     }
 
 }
